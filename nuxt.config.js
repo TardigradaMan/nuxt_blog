@@ -25,7 +25,7 @@ module.exports = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['@/plugins/globals'],
+  plugins: ['@/plugins/globals', '@/plugins/axios'],
   /*
    ** Nuxt.js dev-modules
    */
@@ -35,16 +35,23 @@ module.exports = {
    */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/pwa'
   ],
+
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
-  axios: {},
+  axios: {
+    baseURL: process.env.BASE_URL || 'http://localhost:3000'
+  },
   /*
    ** Build configuration
    */
+  env: {
+    appName: 'SSR Blog'
+  },
   build: {
     transpile: [/^element-ui/],
     /*

@@ -8,7 +8,7 @@
     <h1 class="mb">Создать новый пост</h1>
 
     <el-form-item label="Введите название поста" prop="title">
-      <el-input v-model.trim="controls.title" />
+      <el-input v-model="controls.title" />
     </el-form-item>
 
     <el-form-item label="Текст в формате .md или .html" prop="text">
@@ -29,6 +29,7 @@
         <vue-markdown>{{ controls.text }}</vue-markdown>
       </div>
     </el-dialog>
+
     <el-upload
       class="mb"
       drag
@@ -56,6 +57,9 @@
 export default {
   layout: 'admin',
   middleware: ['admin-auth'],
+  head: {
+    title: `Новый пост | ${process.env.appName}`
+  },
   data() {
     return {
       image: null,
@@ -110,7 +114,7 @@ export default {
             this.loading = false;
           }
         } else {
-          this.$message.warning('Не все поля заполнены');
+          this.$message.warning('Форма не валидна');
         }
       });
     }

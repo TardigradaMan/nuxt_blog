@@ -10,8 +10,8 @@ const keys = require('./keys');
 const app = express();
 
 mongoose
-  .connect(keys.MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
+  .connect(keys.MONGO_URI, { useNewUrlParser: true, useFindAndModify: false })
+  .then(() => console.log('MongoDB-Atlas connected...'))
   .catch(error => console.error(error));
 
 app.use(passport.initialize());

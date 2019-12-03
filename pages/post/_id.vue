@@ -2,7 +2,7 @@
   <article class="post">
     <header class="post-header">
       <div class="post-title">
-        <h1>Post Title</h1>
+        <h1>{{ post.title }}</h1>
         <nuxt-link to="/">
           <i class="el-icon-back"></i>
         </nuxt-link>
@@ -10,47 +10,30 @@
       <div class="post-info">
         <small>
           <i class="el-icon-time"></i>
-          {{ new Date().toLocaleString() }}
+          {{ post.date | date }}
         </small>
         <small>
           <i class="el-icon-view"></i>
-          42
+          {{ post.views }}
         </small>
       </div>
       <div class="post-image">
-        <img
-          src="https://cdn.tripzaza.com/ru/destinations/files/2017/09/Berlin-e1505798693967.jpg"
-          alt="post image"
-        />
+        <img :src="post.imageUrl" alt="post image" />
       </div>
     </header>
     <main class="post-content">
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora
-        reprehenderit, eius fugiat ipsam nobis consequatur.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora
-        reprehenderit, eius fugiat ipsam nobis consequatur.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora
-        reprehenderit, eius fugiat ipsam nobis consequatur.
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora
-        reprehenderit, eius fugiat ipsam nobis consequatur.
-      </p>
+      <vue-markdown>{{ post.text }}</vue-markdown>
     </main>
     <footer>
       <app-comment-form
         @created="createCommentHandler"
         v-if="canAddComment"
+        :postId="post._id"
       ></app-comment-form>
-      <div class="commetns" v-if="true">
+      <div class="commetns" v-if="post.comments.length">
         <app-comment
-          v-for="comment in 4"
-          :key="comment"
+          v-for="comment in post.comments"
+          :key="comment._id"
           :comment="comment"
         ></app-comment>
       </div>
@@ -65,11 +48,24 @@ export default {
   validate({ params }) {
     return Boolean(params.id);
   },
+  head() {
+    return {
+      title: `${this.post.title} | ${process.env.appName}`
+    };
+  },
+  async asyncData({ store, params }) {
+    const post = await store.dispatch('post/fetchById', params.id);
+    await store.dispatch('post/addView', post);
+    return {
+      post: { ...post, views: ++post.views }
+    };
+  },
   data() {
     return { canAddComment: true };
   },
   methods: {
-    createCommentHandler() {
+    createCommentHandler(comment) {
+      this.post.comments.unshift(comment);
       this.canAddComment = false;
     }
   },
